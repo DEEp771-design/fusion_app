@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import '../services/user_preferences_service.dart';
 import '../screens/Examination/examination_dashboard.dart';
-import '../screens/Examination/submit_grades.dart';
-import '../screens/Examination/update_grades.dart';
 import '../screens/Examination/result.dart';
 import 'home.dart'; // Import home screen
+import '../screens/EmployeeManagement/employee_management_dashboard.dart'; // Remove 'hide SizedBox'
+import '../screens/EmployeeManagement/publication_screen.dart'; // Add this import
+import '../screens/EmployeeManagement/thesis_supervision_screen.dart'; // Add this import
+import '../screens/EmployeeManagement/visits_screen.dart'; // Add this import
+import '../screens/EmployeeManagement/others_screen.dart'; // Add this import
+import '../screens/EmployeeManagement/conferences_screen.dart'; // Add this import
+import '../screens/EmployeeManagement/projects_screen.dart'; // Add this import
+import '../screens/EmployeeManagement/events_screen.dart'; // Add this import
 
 class Sidebar extends StatefulWidget {
   final Function(int)? onItemSelected;
@@ -30,6 +36,7 @@ class _SidebarState extends State<Sidebar> {
   bool _isLibraryManagementExpanded = false;
   bool _isHostelManagementExpanded = false;
   bool _isAlumniNetworkExpanded = false;
+  bool _isEmployeeManagementExpanded = false; // Add a dedicated state variable
   bool _showPositionOptions = false;
   String _currentPosition = 'Faculty Member';
   final List<String> _positions = [
@@ -477,13 +484,9 @@ class _SidebarState extends State<Sidebar> {
                       title: 'Validate Grades',
                       index: 6),
                   _buildSubNavItem(context,
-                      icon: Icons.update,
-                      title: 'Update Grades',
-                      index: 7),
+                      icon: Icons.update, title: 'Update Grades', index: 7),
                   _buildSubNavItem(context,
-                      icon: Icons.assessment,
-                      title: 'Result',
-                      index: 8),
+                      icon: Icons.assessment, title: 'Result', index: 8),
                   ListTile(
                     leading: const Icon(Icons.assessment),
                     title: const Text('View Results'),
@@ -812,6 +815,138 @@ class _SidebarState extends State<Sidebar> {
                       title: 'Mentorship Programs',
                       index: 55),
                 ],
+
+                // Employee Management Module
+                _buildModuleWithToggle(
+                  icon: Icons.people,
+                  title: 'Employee Management',
+                  isExpanded:
+                      _isEmployeeManagementExpanded, // Use correct state
+                  onToggle: () {
+                    setState(() {
+                      _isEmployeeManagementExpanded =
+                          !_isEmployeeManagementExpanded;
+                    });
+                  },
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const EmployeeManagementDashboard(),
+                      ),
+                    );
+                  },
+                ),
+                if (_isEmployeeManagementExpanded) ...[
+                  // Use correct state
+                  _buildSubNavItem(
+                    context,
+                    icon: Icons.article,
+                    title: 'Publications',
+                    index: 0,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PublicationScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  _buildSubNavItem(
+                    context,
+                    icon: Icons.event_available,
+                    title: 'Events',
+                    index: 1,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const EventsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  _buildSubNavItem(
+                    context,
+                    icon: Icons.school,
+                    title: 'Thesis Supervision',
+                    index: 2,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ThesisSupervisionScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  _buildSubNavItem(
+                    context,
+                    icon: Icons.work,
+                    title: 'Projects',
+                    index: 3,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ProjectsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  _buildSubNavItem(
+                    context,
+                    icon: Icons.travel_explore,
+                    title: 'Visits',
+                    index: 4,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const VisitsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  _buildSubNavItem(
+                    context,
+                    icon: Icons.forum,
+                    title: 'Conferences',
+                    index: 5,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ConferencesScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  _buildSubNavItem(
+                    context,
+                    icon: Icons.more_horiz,
+                    title: 'Others',
+                    index: 6,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const OthersScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ],
             ),
           ),
@@ -937,6 +1072,7 @@ class _SidebarState extends State<Sidebar> {
     required IconData icon,
     required String title,
     required int index,
+    VoidCallback? onTap,
   }) {
     return ListTile(
       contentPadding: const EdgeInsets.only(left: 50.0, right: 16.0),
@@ -949,27 +1085,10 @@ class _SidebarState extends State<Sidebar> {
           color: Colors.blue.shade800,
         ),
       ),
-      onTap: () {
-        // Close the drawer
-        Navigator.pop(context);
-        // Navigate to Submit Grades screen if index matches
-        if (index == 3) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const SubmitGradesScreen()),
-          );
-        } else if (index == 7) {
-          // Navigate to Update Grades screen
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const UpdateGradesScreen()),
-          );
-        }
-        // Notify parent about selection
-        if (widget.onItemSelected != null) {
-          widget.onItemSelected!(index);
-        }
-      },
+      onTap: onTap ??
+          () {
+            // Default behavior
+          },
     );
   }
 }
